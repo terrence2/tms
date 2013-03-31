@@ -1,0 +1,31 @@
+<html>
+<head>
+  <title>BrickDiff</title>
+</head>
+<body>
+  {% autoescape on %}
+  <h1>Missing Bricks for: {{ setno }}</h1>
+  <form action="/brickdiff/email/" method="post">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <th>Need</th>
+      <th>Image</th>
+      <th>Description</th> <!-- Hover for Category -->
+      <th>Brickset id</th> <!-- Link to BrickSet -->
+      <th>LEGO id</th>
+    </tr>
+  {% for uid, data in counts.iteritems %}
+    <tr>
+      <td>{{ data.count }}</td>
+      <td><img src="{{ data.image_url }}" alt="{{ uid }}"/></td>
+      <td>{{ data.description }} - {{ data.color }}</td>
+      <td><a href="http://www.brickset.com/parts/?part={{ uid }}">{{ uid }}</a></td>
+      <td>{{ data.partno }}</td>
+    </tr>
+    <input type="text" name="setno" style="display:none" value="{{ setno }}"></input>
+  {% endfor %}
+  </table>
+  {% endautoescape %}
+</body>
+</html>

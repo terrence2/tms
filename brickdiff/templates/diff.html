@@ -1,0 +1,62 @@
+<html>
+<head>
+  <title>BrickDiff</title>
+  <script>
+  function elem(setno) {
+      return document.getElementById('' + setno + '-have');
+  }
+  function incr(setno) {
+      var cnt = parseInt(elem(setno).value);
+      elem(setno).value = cnt + 1;
+  }
+  function decr(setno) {
+      var cnt = parseInt(elem(setno).value);
+      elem(setno).value = cnt - 1;
+  }
+  function full(setno) {
+      var button = document.getElementById('' + setno + '-full');
+      elem(setno).value = parseInt(button.innerHTML);
+  }
+  </script>
+</head>
+<body>
+  {% autoescape on %}
+  <h1>Required Bricks for: {{ setno }}</h1>
+  <form action="/brickdiff/result/" method="post">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <th>Have</th>
+      <th>Need</th>
+      <th>Image</th>
+      <th>Description</th> <!-- Hover for Category -->
+      <th>LEGO id</th>
+    </tr>
+  {% for setitem in bricks %}
+    <tr>
+      <td>
+        <button type="button" id="{{ setitem.brick.uid }}-up"
+                onclick="incr('{{ setitem.brick.uid }}');">+</button>
+        <input type="text" size=4 id="{{ setitem.brick.uid }}-have"
+                name="{{ setitem.brick.uid}}" value="0"></input>
+        <button type="button" id="{{ setitem.brick.uid }}-down"
+                onclick="decr('{{ setitem.brick.uid }}');">-</button>
+      </td>
+      <td>
+        <button type="button" id="{{ setitem.brick.uid }}-full"
+                onclick="full('{{ setitem.brick.uid }}');">{{ setitem.count }}</button>
+      </td>
+      <td>
+        <img src="{{ setitem.brick.image_url }}" alt="{{ setitem.brick.uid }}"/>
+      </td>
+      <td>{{ setitem.brick.description }} - {{ setitem.brick.color }}</td>
+      <td>{{ setitem.brick.partno }}</td>
+    </tr>
+    <input type="text" name="setno" style="display:none" value="{{ setno }}"></input>
+  {% endfor %}
+  </table>
+  <input type="submit" value="Get Missing Parts"></input>
+  </form>
+  {% endautoescape %}
+</body>
+</html>
